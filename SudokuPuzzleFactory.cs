@@ -20,7 +20,8 @@ namespace CommandLineSudoku {
         }
 
         public SudokuPuzzle CreateSudokuPuzzle(SudokuDifficulty difficulty) {
-            return InitSudokuGrid();
+            SudokuPuzzle puzzle = InitSudokuGrid();
+            return DecorateSudokuPuzzle(difficulty, puzzle);
         }
 
         private SudokuPuzzle AttemptToInitSudokuGrid() {
@@ -58,7 +59,7 @@ namespace CommandLineSudoku {
             return puzzle;
         }
 
-        public SudokuPuzzle InitSudokuGrid() {
+        private SudokuPuzzle InitSudokuGrid() {
             SudokuPuzzle puzzle = null;
 
             do puzzle = AttemptToInitSudokuGrid();
@@ -67,6 +68,30 @@ namespace CommandLineSudoku {
             return puzzle;
         }
 
-    }
+        private SudokuPuzzle DecorateSudokuPuzzle(SudokuDifficulty difficulty, SudokuPuzzle puzzle){
+            
+            int x, y, valuesToHide = 0, counter = 0;
+            int totalValue = puzzle.Rows.Length * puzzle.Columns.Length;
+            Random rand = new Random();
 
+            switch(difficulty){
+                case SudokuDifficulty.Easy : valuesToHide = (int) (totalValue * 0.4); break;
+                case SudokuDifficulty.Medium : valuesToHide = (int) (totalValue * 0.6); break;
+                case SudokuDifficulty.Hard : valuesToHide = (int) (totalValue * 0.75); break;
+            }
+
+            do {
+                x = rand.Next(0,9);
+                y = rand.Next(0,9);
+
+                if(puzzle.Grid[x,y].IsVisible == false) continue;
+
+                puzzle.Grid[x,y].IsVisible = false;
+                counter ++;
+            }
+            while(counter < valuesToHide);
+
+            return puzzle;
+        }
+    }
 }
