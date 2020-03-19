@@ -1,37 +1,20 @@
 using System;
-using System.Text;
 
 namespace CommandLineSudoku {
 
-    public class SudokuRow : ISudokuComponent {
+    public class SudokuRow {
 
         // CONSTRUCTORS
-        public SudokuRow(int length) {
-            this.Length = Length;
-            this.Cells = new SudokuCell[length];
+        internal SudokuRow() {
+            this.Cells = new SudokuCell[9];
         } 
 
         // PROPERTIES
-        public SudokuCell[] Cells { get; private set; }
-        public int Length { get; private set; }
+        internal SudokuCell[] Cells { get; private set; }
 
         // METHODS
-        public bool ContainsValue(int value) {
-            return Array.Exists(Cells, c => c != null && c.Value == value);
-        }
-
-        // OBJECT OVERRIDES
-        public override string ToString() {
-            StringBuilder sb = new StringBuilder();
-
-            foreach(SudokuCell c in Cells) {
-                sb.Append(SudokuPrint.VerticalDivider);
-                sb.Append(c);
-            }
-            sb.Append(SudokuPrint.VerticalDivider);
-            sb.Append(SudokuPrint.NewLine);
-
-            return sb.ToString();
+        public bool ContainsNumber(int number) {
+            return Array.Exists(Cells, c => c != null && c.Number == number);
         }
     }
 }

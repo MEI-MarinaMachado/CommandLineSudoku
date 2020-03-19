@@ -5,22 +5,18 @@ namespace CommandLineSudoku {
     enum SudokuMenuOption {
         Play,
         Credits,
-        Quit,
+        Exit,
         Unknown
     }
 
     class Program {
         static void Main(string[] args) {
-            InitGame();
-        }
-
-        private static void InitGame() {
-            Console.WriteLine(SudokuPrint.GameTitle);
+            Console.WriteLine(SudokuPrint.TitleScreen);
             Console.WriteLine(SudokuPrint.WelcomeMsg);
-            SelectMenuOption();
+            selectMenuOption();
         }
 
-        private static void SelectMenuOption() {
+        private static void selectMenuOption() {
             SudokuMenuOption menu = SudokuMenuOption.Unknown;
 
             do {
@@ -28,7 +24,7 @@ namespace CommandLineSudoku {
                 Console.WriteLine(SudokuPrint.SelectionMsg);
                 string selection = Console.ReadLine();
 
-                menu = GetSudokuMenuOption(selection);
+                menu = getSudokuMenuOption(selection);
 
                 if(menu == SudokuMenuOption.Unknown) { 
                     Console.WriteLine(SudokuPrint.SelectionErrorMsg);
@@ -39,81 +35,68 @@ namespace CommandLineSudoku {
             while(menu == SudokuMenuOption.Unknown);
 
             switch(menu) {
-                case SudokuMenuOption.Play : Play(); break;
-                case SudokuMenuOption.Credits : Credits(); break;
-                case SudokuMenuOption.Quit : Quit(); break;
+                case SudokuMenuOption.Play : play(); break;
+                case SudokuMenuOption.Credits : credits(); break;
+                case SudokuMenuOption.Exit : exit(); break;
             }
         }
 
-        private static SudokuMenuOption GetSudokuMenuOption(string selection) {
-            int optionNumber;
-            try {
-                optionNumber = Int32.Parse(selection);
-            }
-            catch(Exception e){
-                return SudokuMenuOption.Unknown;
-            }
-             
+        private static SudokuMenuOption getSudokuMenuOption(string selection) {
             SudokuMenuOption option;
-            switch(optionNumber) {
-                case 1 : option = SudokuMenuOption.Play; break;
-                case 2 : option = SudokuMenuOption.Credits; break;
-                case 3 : option = SudokuMenuOption.Quit; break;
-                default : option = SudokuMenuOption.Unknown; break;
+            switch(selection.ToUpper()) {
+                case "P" : option = SudokuMenuOption.Play; break;
+                case "C" : option = SudokuMenuOption.Credits; break;
+                case "X" : option = SudokuMenuOption.Exit; break;
+                default  : option = SudokuMenuOption.Unknown; break;
             }
             return option;
         }
         
-        private static void Credits() {
+        private static void credits() {
             Console.WriteLine(SudokuPrint.CreditsScreen);
-            GoBack();
+            goBack();
         }
         
-        private static void Quit() {
-            Console.WriteLine(SudokuPrint.QuitMsg);
+        private static void exit() {
+            Console.WriteLine(SudokuPrint.ExitMsg);
         }
         
-        private static void GoBack() {
+        private static void goBack() {
             Console.WriteLine(SudokuPrint.GoBackMsg);
             Console.ReadLine();
             Console.WriteLine();
-            SelectMenuOption();
+            selectMenuOption();
         }
 
-        private static void Play() {
+        private static void play() {
             string selection;
-            int optionNumber = 0;
+            SudokuGame.Difficulty difficulty = SudokuGame.Difficulty.Unknown;
+            bool validSelection = false;
+
             do {
                 Console.WriteLine(SudokuPrint.DifficultyScreen);
                 Console.WriteLine(SudokuPrint.SelectionMsg);
                 selection = Console.ReadLine();
                 Console.WriteLine();
 
-                try {
-                    optionNumber = Int32.Parse(selection);
-                }
-                catch(Exception e){
-                    Console.WriteLine(SudokuPrint.SelectionErrorMsg);
+                switch(selection.ToUpper()) {
+                    case "E" : difficulty = SudokuGame.Difficulty.Easy; validSelection = true; break;
+                    case "M" : difficulty = SudokuGame.Difficulty.Medium; validSelection = true; break;
+                    case "H" : difficulty = SudokuGame.Difficulty.Hard; validSelection = true; break;
+                    case "X" : difficulty = SudokuGame.Difficulty.Unknown; validSelection = true; break;
+                    default  : Console.WriteLine(SudokuPrint.SelectionErrorMsg); break;
                 }
             }
-            while(optionNumber == 0);
+            while(validSelection == false);
 
-            switch(optionNumber) {
-                case 1 : Play(SudokuPuzzleFactory.SudokuDifficulty.Easy); break;
-                case 2 : Play(SudokuPuzzleFactory.SudokuDifficulty.Medium); break;
-                case 3 : Play(SudokuPuzzleFactory.SudokuDifficulty.Hard); break;
-                case 4 : SelectMenuOption(); break;
-            }
+            if(difficulty == SudokuGame.Difficulty.Unknown) selectMenuOption();
+            else play(difficulty);
         }
 
-        private static void Play(SudokuPuzzleFactory.SudokuDifficulty difficulty) {
-            Console.WriteLine(SudokuPrint.GeneratingPuzzleMsg);
-
-            SudokuPuzzleFactory factory = new SudokuPuzzleFactory();
-            SudokuPuzzle puzzle = factory.CreateSudokuPuzzle(difficulty);
-
-            Console.WriteLine(puzzle);
-            Console.WriteLine();
+        private static void play(SudokuGame.Difficulty difficulty) {
+            SudokuGame game = new SudokuGame(difficulty);
+            game.Play();
+            selectMenuOption();
         }
     }
 }

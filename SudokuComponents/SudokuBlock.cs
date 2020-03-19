@@ -1,54 +1,24 @@
-using System.Text;
-
 namespace CommandLineSudoku {
 
-    public class SudokuBlock : ISudokuComponent {
+    public class SudokuBlock {
 
         // CONSTRUCTORS
-        public SudokuBlock(int length) {
-            this.Length = length;
-            this.Cells = new SudokuCell[length,length];
+        public SudokuBlock() {
+            this.Cells = new SudokuCell[3,3];
         } 
 
         // PROPERTIES
         public SudokuCell[,] Cells { get; set; }
-        public int Length { get; private set; }
 
         // METHODS
-        public bool ContainsValue(int value) {
-            for(int y = 0; y < Length; y++) {
-                for(int x = 0; x < Length; x++) {
+        public bool ContainsNumber(int number) {
+            for(int y = 0; y < 3; y++) {
+                for(int x = 0; x < 3; x++) {
                     SudokuCell c = Cells[x,y];
-                    if(c != null && c.Value == value) return true;
+                    if(c != null && c.Number == number) return true;
                 }
             }
             return false;
-        }
-
-        // OBJECT OVERRIDES
-        public override string ToString() {
-            StringBuilder sb = new StringBuilder();
-
-            for(int x = 0 ; x < Length; x++) {
-                sb.Append(SudokuPrint.HorizontalDivider);
-                sb.Append(SudokuPrint.HorizontalDivider);
-                sb.Append(SudokuPrint.HorizontalDivider);
-                sb.Append(SudokuPrint.NewLine);
-
-                for(int y = 0; y < Length; y ++){
-                    sb.Append(SudokuPrint.VerticalDivider);
-                    sb.Append(Cells[x,y]);
-                }
-
-                sb.Append(SudokuPrint.VerticalDivider);
-                sb.Append(SudokuPrint.NewLine);
-            }
-
-            sb.Append(SudokuPrint.HorizontalDivider);
-            sb.Append(SudokuPrint.HorizontalDivider);
-            sb.Append(SudokuPrint.HorizontalDivider);
-
-            return sb.ToString();
-        }        
+        } 
     }
 }
